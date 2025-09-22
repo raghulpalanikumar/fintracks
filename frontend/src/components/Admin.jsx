@@ -19,8 +19,8 @@ const Admin = ({ token }) => {
 
   const checkDatabaseHealth = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      const response = await fetch(`${apiUrl}/api/users/admin/health`, {
+      const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
+      const response = await fetch(`${apiBase}/api/users/admin/health`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -51,7 +51,8 @@ const Admin = ({ token }) => {
     try {
       setDeletingUserId(userId);
       
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/users/admin/${userId}`, {
+      const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
+      const response = await fetch(`${apiBase}/api/users/admin/${userId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -94,7 +95,8 @@ const Admin = ({ token }) => {
       
       console.log('Fetching users from admin API...');
       
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/users/admin/all`, {
+      const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
+      const response = await fetch(`${apiBase}/api/users/admin/all`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

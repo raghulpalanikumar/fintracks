@@ -30,13 +30,13 @@ function App() {
   const [showLogin, setShowLogin] = useState(() => !localStorage.getItem('user'));
   const [token, setToken] = useState(() => localStorage.getItem('token'));
 
+  const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
 
   // Add transaction to backend
   const addTransaction = async (transaction) => {
     if (!token) return;
     try {
-      const apiUrl = import.meta.env.VITE_API_URL;
-      const res = await fetch(`${apiUrl}/api/transactions`, {
+      const res = await fetch(`${apiBase}/api/transactions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,13 +55,11 @@ function App() {
     }
   };
 
-
   // Delete transaction from backend
   const deleteTransaction = async (id) => {
     if (!token) return;
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      const res = await fetch(`${apiUrl}/api/transactions/${id}`, {
+      const res = await fetch(`${apiBase}/api/transactions/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -108,8 +106,7 @@ function App() {
   // Fetch transactions after login
   useEffect(() => {
     if (token) {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      fetch(`${apiUrl}/api/transactions`, {
+      fetch(`${apiBase}/api/transactions`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
         .then(res => res.json())

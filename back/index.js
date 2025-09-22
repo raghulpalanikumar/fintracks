@@ -23,19 +23,44 @@ app.use((req, res, next) => {
   next();
 });
 
-// Strict CORS configuration for deployed frontend
-const VERCEL_ORIGIN = 'https://fintracks-3kxq.vercel.app';
+// Strict CORS configuration for deployed frontend and local dev
+const ALLOWED_ORIGINS = [
+  'https://fintracks-3kxq.vercel.app',
+  'http://localhost:5173'
+];
+const isLocalhostOrigin = (origin) => {
+  try {
+    if (!origin) return false;
+    const u = new URL(origin);
+    return u.hostname === 'localhost' || u.hostname === '127.0.0.1';
+  } catch {
+    return false;
+  }
+};
+
 app.use(cors({
-  origin: VERCEL_ORIGIN,
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (ALLOWED_ORIGINS.includes(origin) || isLocalhostOrigin(origin)) return callback(null, true);
+    return callback(new Error('Not allowed by CORS'));
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
+  exposedHeaders: ['Content-Type']
 }));
 
 // Handle preflight requests
 app.options('*', cors({
-  origin: VERCEL_ORIGIN,
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (ALLOWED_ORIGINS.includes(origin) || isLocalhostOrigin(origin)) return callback(null, true);
+    return callback(new Error('Not allowed by CORS'));
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
+  exposedHeaders: ['Content-Type']
 }));
 
 // Increase payload size limit for JSON bodies

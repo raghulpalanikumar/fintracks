@@ -18,7 +18,8 @@ const UserDashboard = ({ userId, token, onBack }) => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/users/admin/${userId}/transactions`, {
+      const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
+      const response = await fetch(`${apiBase}/api/users/admin/${userId}/transactions`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
