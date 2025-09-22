@@ -14,25 +14,30 @@ import aiFinanceRoutes from './routes/ai-finance.js';
 dotenv.config();
 
 const app = express();
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://fintracks-qtmj.vercel.app',
-  'https://fintracks-akdl.vercel.app'
-];
-if (process.env.ALLOWED_ORIGINS) {
-  const extra = process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim()).filter(Boolean);
-  allowedOrigins.push(...extra);
-}
+
+// Normalize any accidental double slashes in request URLs
+app.use((req, res, next) => {
+  if (typeof req.url === 'string') {
+    req.url = req.url.replace(/\/{2,}/g, '/');
+  }
+  next();
+});
+
+// Strict CORS configuration for deployed frontend
+const VERCEL_ORIGIN = 'https://fintracks-3kxq.vercel.app';
 app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    return callback(new Error('Not allowed by CORS'));
-  },
+  origin: VERCEL_ORIGIN,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
+
+// Handle preflight requests
+app.options('*', cors({
+  origin: VERCEL_ORIGIN,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
+
 // Increase payload size limit for JSON bodies
 app.use(express.json({ limit: '2mb' }));
 
