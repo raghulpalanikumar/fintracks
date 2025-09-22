@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Navbar = ({ activeTab, setActiveTab, onExport, onImport }) => {
+const Navbar = ({ activeTab, setActiveTab, onExport, onImport, user }) => {
   const tabs = [
     { id: 'home', label: 'Home', icon: '🏠' },
     { id: 'dashboard', label: 'Dashboard', icon: '📊' },
@@ -9,8 +9,12 @@ const Navbar = ({ activeTab, setActiveTab, onExport, onImport }) => {
     { id: 'summary', label: 'Summary', icon: '📈' },
     { id: 'assistant', label: 'AI Assistant', icon: '🤖' },
     { id: 'profile', label: 'Profile', icon: '👤' },
-    { id: 'admin', label: 'Admin', icon: '👑' }
+    // Admin tab will be conditionally added below
   ];
+
+  // Only show Admin tab for admin user
+  const isAdmin = user && user.email === 'admin@fintrack.com';
+  const displayTabs = isAdmin ? [...tabs, { id: 'admin', label: 'Admin', icon: '👑' }] : tabs;
 
   return (
     <nav style={{
@@ -75,7 +79,7 @@ const Navbar = ({ activeTab, setActiveTab, onExport, onImport }) => {
           maxWidth: 800,
           margin: '0 24px'
         }}>
-          {tabs.map(tab => (
+          {displayTabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}

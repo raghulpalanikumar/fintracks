@@ -181,7 +181,12 @@ function App() {
       case 'profile':
         return <Profile />;
       case 'admin':
-        return <Admin token={token} />;
+        // Only allow admin user to access Admin panel
+        if (user && user.email === 'admin@fintrack.com') {
+          return <Admin token={token} />;
+        } else {
+          return <div style={{ color: 'red', padding: '2rem', textAlign: 'center' }}>Access denied. Admins only.</div>;
+        }
       default:
         return <Dashboard transactions={transactions} />;
     }
@@ -224,7 +229,7 @@ function App() {
         background: 'linear-gradient(135deg, #0f172a 0%, #a855f7 100%)'
       }}
     >
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} onExport={handleExport} onImport={handleImport} />
+      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} onExport={handleExport} onImport={handleImport} user={user} />
       <main className="main-content">
         <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem' }}>
           <span style={{ fontWeight: 'bold', color: '#667eea', fontSize: '1.1rem' }}>Hello, {user?.name}</span>
