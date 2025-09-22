@@ -15,7 +15,10 @@ dotenv.config();
 
 const app = express();
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: [
+    'http://localhost:5173',
+    'https://fintracks-qtmj.vercel.app'
+  ],
   credentials: true
 }));
 // Increase payload size limit for JSON bodies

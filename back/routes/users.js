@@ -21,6 +21,16 @@ function auth(req, res, next) {
   }
 }
 
+// Admin check middleware
+function adminOnly(req, res, next) {
+  User.findById(req.userId).then(user => {
+    if (!user || user.email !== 'admin@fintrack.com') {
+      return res.status(403).json({ message: 'Access denied. Admins only.' });
+    }
+    next();
+  }).catch(() => res.status(403).json({ message: 'Access denied. Admins only.' }));
+}
+
 // ✅ Get current user's profile (must be before /:id)
 router.get('/me', auth, async (req, res) => {
   try {
@@ -80,7 +90,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Database health check for admin
-router.get('/admin/health', auth, async (req, res) => {
+router.get('/admin/health', auth, adminOnly, async (req, res) => {
   try {
     const isConnected = mongoose.connection.readyState === 1;
     const userCount = isConnected ? await User.countDocuments() : 0;
@@ -107,7 +117,7 @@ router.get('/admin/health', auth, async (req, res) => {
 });
 
 // Admin route to delete a user
-router.delete('/admin/:userId', auth, async (req, res) => {
+router.delete('/admin/:userId', auth, adminOnly, async (req, res) => {
   try {
     console.log('Admin deleting user:', req.params.userId);
     
@@ -152,7 +162,7 @@ router.delete('/admin/:userId', auth, async (req, res) => {
 });
 
 // Admin route to get user transactions for dashboard view
-router.get('/admin/:userId/transactions', auth, async (req, res) => {
+router.get('/admin/:userId/transactions', auth, adminOnly, async (req, res) => {
   try {
     console.log('Admin viewing transactions for user:', req.params.userId);
     
@@ -203,7 +213,7 @@ router.get('/admin/:userId/transactions', auth, async (req, res) => {
 });
 
 // Admin route to get all users (including passwords for admin purposes)
-router.get('/admin/all', auth, async (req, res) => {
+router.get('/admin/all', auth, adminOnly, async (req, res) => {
   try {
     console.log('Admin route accessed by user:', req.userId);
     
