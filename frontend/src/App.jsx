@@ -35,7 +35,8 @@ function App() {
   const addTransaction = async (transaction) => {
     if (!token) return;
     try {
-      const res = await fetch('http://localhost:5000/api/transactions', {
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const res = await fetch(`${apiUrl}/api/transactions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,7 +60,8 @@ function App() {
   const deleteTransaction = async (id) => {
     if (!token) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/transactions/${id}`, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const res = await fetch(`${apiUrl}/api/transactions/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -106,7 +108,8 @@ function App() {
   // Fetch transactions after login
   useEffect(() => {
     if (token) {
-      fetch('http://localhost:5000/api/transactions', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      fetch(`${apiUrl}/api/transactions`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
         .then(res => res.json())

@@ -14,11 +14,23 @@ import aiFinanceRoutes from './routes/ai-finance.js';
 dotenv.config();
 
 const app = express();
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://fintracks-qtmj.vercel.app',
+  'https://fintracks-akdl.vercel.app'
+];
+if (process.env.ALLOWED_ORIGINS) {
+  const extra = process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim()).filter(Boolean);
+  allowedOrigins.push(...extra);
+}
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://fintracks-qtmj.vercel.app'
-  ],
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true
 }));
 // Increase payload size limit for JSON bodies

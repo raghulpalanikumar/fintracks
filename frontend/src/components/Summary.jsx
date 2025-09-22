@@ -83,7 +83,8 @@ const Summary = ({ transactions }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) return;
-    fetch('http://localhost:5000/api/recurring', {
+    const apiUrl = import.meta.env.VITE_API_URL || '';
+    fetch(`${apiUrl}/api/recurring`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -104,7 +105,7 @@ const Summary = ({ transactions }) => {
     const token = localStorage.getItem('token');
     if (recurringForm._id) {
       // Edit
-      const res = await fetch(`http://localhost:5000/api/recurring/${recurringForm._id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/recurring/${recurringForm._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -116,7 +117,7 @@ const Summary = ({ transactions }) => {
       setRecurringPayments(list => list.map(r => r._id === updated._id ? updated : r));
     } else {
       // Add
-      const res = await fetch('http://localhost:5000/api/recurring', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/recurring`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -142,7 +143,7 @@ const Summary = ({ transactions }) => {
     if (!window.confirm('Delete this recurring payment?')) return;
     const token = localStorage.getItem('token');
     const rec = recurringPayments[idx];
-    await fetch(`http://localhost:5000/api/recurring/${rec._id}`, {
+    await fetch(`${import.meta.env.VITE_API_URL || ''}/api/recurring/${rec._id}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` },
     });
