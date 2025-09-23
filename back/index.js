@@ -40,13 +40,14 @@ const isLocalhostOrigin = (origin) => {
 };
 
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    if (ALLOWED_ORIGINS.includes(origin) || isLocalhostOrigin(origin)) return callback(null, true);
-    return callback(new Error('Not allowed by CORS'));
-  },
+  // origin: (origin, callback) => {
+  //   if (!origin) return callback(null, true);
+  //   if (ALLOWED_ORIGINS.includes(origin) || isLocalhostOrigin(origin)) return callback(null, true);
+  //   return callback(new Error('Not allowed by CORS'));
+  // },
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true,
+  //credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
   exposedHeaders: ['Content-Type']
 }));
