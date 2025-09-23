@@ -1,4 +1,3 @@
-
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
@@ -23,46 +22,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// Strict CORS configuration for deployed frontend and local dev
-const ALLOWED_ORIGINS = [
-  'https://fintracks-3kxq.vercel.app',
-  'http://localhost:5173',
-  'https://finance-tracker-01.vercel.app' // <-- Added your deployed Vercel frontend
-];
-const isLocalhostOrigin = (origin) => {
-  try {
-    if (!origin) return false;
-    const u = new URL(origin);
-    return u.hostname === 'localhost' || u.hostname === '127.0.0.1';
-  } catch {
-    return false;
-  }
-};
-
+// 🔥 Allow everyone (since you want the project to be public)
 app.use(cors({
-  // origin: (origin, callback) => {
-  //   if (!origin) return callback(null, true);
-  //   if (ALLOWED_ORIGINS.includes(origin) || isLocalhostOrigin(origin)) return callback(null, true);
-  //   return callback(new Error('Not allowed by CORS'));
-  // },
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  //credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
-  exposedHeaders: ['Content-Type']
-}));
-
-// Handle preflight requests
-app.options('*', cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    if (ALLOWED_ORIGINS.includes(origin) || isLocalhostOrigin(origin)) return callback(null, true);
-    return callback(new Error('Not allowed by CORS'));
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
-  exposedHeaders: ['Content-Type']
 }));
 
 // Increase payload size limit for JSON bodies
@@ -73,6 +37,7 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' });
 });
 
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/reminders', remindersRoutes);
@@ -109,17 +74,7 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/fintrack', 
 .catch((err) => {
   console.error('MongoDB connection error:', err);
   console.log('Starting server without database connection...');
-  // Start server even if MongoDB fails to connect
-  const server = app.listen(PORT, () => {
+  app.listen(PORT, () => {
     console.log(`Server running on port ${PORT} (without database)`);
-  }).on('error', (err) => {
-    if (err.code === 'EADDRINUSE') {
-      console.log(`Port ${PORT} is busy, trying port ${PORT + 1}`);
-      app.listen(PORT + 1, () => {
-        console.log(`Server running on port ${PORT + 1} (without database)`);
-      });
-    } else {
-      console.error('Server error:', err);
-    }
   });
 });
