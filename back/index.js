@@ -26,7 +26,8 @@ app.use((req, res, next) => {
 // Strict CORS configuration for deployed frontend and local dev
 const ALLOWED_ORIGINS = [
   'https://fintracks-3kxq.vercel.app',
-  'http://localhost:5173'
+  'http://localhost:5173',
+  'https://finance-tracker-01.vercel.app' // <-- Added your deployed Vercel frontend
 ];
 const isLocalhostOrigin = (origin) => {
   try {
