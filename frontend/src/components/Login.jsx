@@ -28,7 +28,6 @@ const Login = ({ onLogin, switchToSignup }) => {
       const res = await fetch(`${apiBase}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ email, password })
       });
       let data;
